@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0B1120;
+  --color-card: #151F32;
+  --color-border: #253247;
+  --color-primary: #22D3EE;
+  --color-success: #35D07F;
+  --color-danger: #F05265;
+  --color-warning: #F5B942;
+  --color-text: #E5EDF7;
+  --color-muted: #8493A8;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #0B1120;
+  color: #E5EDF7;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tabular numbers for metrics */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0B1120;
+}
+::-webkit-scrollbar-thumb {
+  background: #253247;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8493A8;
+}
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid #22D3EE;
+  outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+  background-color: rgba(34, 211, 238, 0.2);
+  color: #E5EDF7;
+}
+
+/* Recharts tooltips dark */
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: #151F32 !important;
+  border: 1px solid #253247 !important;
+  border-radius: 6px !important;
+  color: #E5EDF7 !important;
+}
+
+/* Smooth sidebar transition */
+.sidebar-transition {
+  transition: width 200ms ease, transform 200ms ease;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

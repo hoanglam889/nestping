@@ -1,0 +1,92 @@
+services:
+  # =========================
+  # FRONTEND
+  # =========================
+  frontend:
+    build:
+      context: ./frontend/nestping-app
+      dockerfile: Dockerfile
+    container_name: nestping-app
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - network-nestping
+
+  # =========================
+  # BACKEND
+  # =========================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: my-backend
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - network-nestping
+
+  # =========================
+  # DATABASE
+  # =========================
+  db:
+    image: mysql:8.0
+    container_name: nestping-database
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3309:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${DB_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - network-nestping
+
+  # =========================
+  # PHPMYADMIN
+  # =========================
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: my-phpmyadmin-nestping
+    restart: unless-stopped
+    ports:
+      - "8083:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - network-nestping
+
+# =========================
+# VOLUMES
+# =========================
+volumes:
+  mysql_data:
+
+# =========================
+# NETWORKS
+# =========================
+networks:
+  network-nestping:
+    driver: bridge

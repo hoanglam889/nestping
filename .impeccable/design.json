@@ -1,0 +1,135 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-20T12:27:00.000Z",
+  "title": "Design System: NestPing",
+  "extensions": {
+    "colorMeta": {
+      "background": {
+        "role": "neutral",
+        "displayName": "Deep Navy Background",
+        "canonical": "#0B1120",
+        "tonalRamp": ["#050810", "#080D18", "#0B1120", "#131C30", "#1E2C4B", "#2D426E", "#506EA6", "#9CB2DD"]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "Console Card",
+        "canonical": "#151F32",
+        "tonalRamp": ["#0B101B", "#0F1624", "#151F32", "#1D2B44", "#2B3E60", "#3E5784", "#6B86B7", "#B2C3E2"]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Structural Border",
+        "canonical": "#253247",
+        "tonalRamp": ["#111721", "#1B2433", "#253247", "#32435E", "#445A7E", "#5C78A4", "#88A1CA", "#C5D3E8"]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "Telemetry Cyan",
+        "canonical": "#22D3EE",
+        "tonalRamp": ["#042F37", "#084E5B", "#0E7490", "#06B6D4", "#22D3EE", "#67E8F9", "#A5F3FC", "#CFFAFE"]
+      },
+      "success": {
+        "role": "secondary",
+        "displayName": "Operational Green",
+        "canonical": "#35D07F",
+        "tonalRamp": ["#06331C", "#0D532F", "#15803D", "#22C55E", "#35D07F", "#86EFAC", "#BBF7D0", "#DCFCE7"]
+      },
+      "danger": {
+        "role": "secondary",
+        "displayName": "Incident Coral",
+        "canonical": "#F05265",
+        "tonalRamp": ["#3B0D13", "#5C151F", "#9F1239", "#E11D48", "#F05265", "#FDA4AF", "#FECDD3", "#FFE4E6"]
+      },
+      "warning": {
+        "role": "secondary",
+        "displayName": "Degraded Amber",
+        "canonical": "#F5B942",
+        "tonalRamp": ["#362205", "#583709", "#A16207", "#EAB308", "#F5B942", "#FDE047", "#FEF08A", "#FEF9C3"]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "High-Readability Text",
+        "canonical": "#E5EDF7",
+        "tonalRamp": ["#1A222D", "#313F52", "#4F637E", "#778FAE", "#A6BBD5", "#C8D7EA", "#E5EDF7", "#F5F8FC"]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Telemetry Muted",
+        "canonical": "#8493A8",
+        "tonalRamp": ["#12161D", "#212732", "#384252", "#556276", "#8493A8", "#A7B3C3", "#CBD3DE", "#EBF0F5"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display Metric", "purpose": "Key counters and dashboard page titles" },
+      "headline": { "displayName": "Section Headline", "purpose": "Card headings and modal titles" },
+      "title": { "displayName": "Item Title", "purpose": "Monitor and incident names" },
+      "body": { "displayName": "Telemetry Body", "purpose": "Standard metadata and log messages" },
+      "label": { "displayName": "Micro Label", "purpose": "Table headers and status badges" }
+    },
+    "shadows": [
+      { "name": "overlay-elevation", "value": "0 10px 25px -5px rgba(0, 0, 0, 0.5)", "purpose": "Dialogs and dropdown menus" }
+    ],
+    "motion": [
+      { "name": "ease-out-fast", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Sidebar collapse and dialog transition" }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Status Badge",
+      "kind": "chip",
+      "refersTo": "badge-status",
+      "description": "High-visibility operational status indicator with colored dot.",
+      "html": "<span class=\"ds-badge ds-badge-operational\"><span class=\"ds-dot\"></span>Operational</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; border: 1px solid rgba(53, 208, 127, 0.2); background: rgba(53, 208, 127, 0.1); color: #35D07F; } .ds-dot { width: 6px; height: 6px; border-radius: 50%; background: #35D07F; }"
+    },
+    {
+      "name": "Telemetry Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary action trigger in high-visibility cyan.",
+      "html": "<button class=\"ds-btn-primary\">Add Monitor</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 32px; padding: 0 12px; font-size: 13px; font-weight: 500; border-radius: 6px; background: #22D3EE; color: #0B1120; border: none; cursor: pointer; transition: opacity 0.15s; } .ds-btn-primary:hover { opacity: 0.9; }"
+    },
+    {
+      "name": "Console Stat Card",
+      "kind": "card",
+      "refersTo": "card-stat",
+      "description": "Compact statistic card displaying key telemetry numbers.",
+      "html": "<div class=\"ds-stat-card\"><span class=\"ds-stat-label\">30-Day Uptime</span><span class=\"ds-stat-val\">99.94%</span><span class=\"ds-stat-sub\">Across all monitors</span></div>",
+      "css": ".ds-stat-card { background: #151F32; border: 1px solid #253247; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px; } .ds-stat-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #8493A8; } .ds-stat-val { font-size: 24px; font-weight: 600; color: #35D07F; font-variant-numeric: tabular-nums; } .ds-stat-sub { font-size: 11px; color: #8493A8; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Precision Telemetry Console",
+    "overview": "NestPing is an infrastructure-grade uptime and telemetry dashboard designed for operators who monitor mission-critical services. The aesthetic rejects marketing fluff and oversized cards in favor of information density and fast scanning.",
+    "keyCharacteristics": [
+      "Operate Mode Priority: Engineered for fast scanning and active diagnosis over visual spectacle.",
+      "Strict Semantic Color: Accent colors indicate state and action, never ambient decoration.",
+      "Tabular Precision: All metric counters and timestamps use tabular figures.",
+      "Layered Surfaces: Clear depth hierarchy from canvas to cards to structural borders."
+    ],
+    "rules": [
+      { "name": "The Rarity of Red Rule", "body": "Coral danger (#F05265) is reserved exclusively for actual downtime, active incidents, and destructive confirmation.", "section": "colors" },
+      { "name": "The Tabular Metric Rule", "body": "Every numerical value representing latency (ms), uptime (%), time duration, or clock time must render with tabular figures.", "section": "typography" },
+      { "name": "The Border-First Elevation Rule", "body": "Elevation is defined by surface color hierarchy and 1px borders (#253247). Glow effects and halos are prohibited.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do format all latency metrics with units (ms, s) and render them with tabular figures.",
+      "Do keep table headers compact, uppercase, and colored with #8493A8.",
+      "Do provide instant toast feedback on every state mutation.",
+      "Do ensure interactive elements have clear focus outlines in primary cyan (#22D3EE)."
+    ],
+    "donts": [
+      "Don't use decorative gradients across page backgrounds or card surfaces.",
+      "Don't use emojis as operational status indicators.",
+      "Don't use glowing halos or continuous animated pulses on status indicators during normal operation.",
+      "Don't add decorative illustrations or marketing banners inside an operator's workspace."
+    ]
+  }
+}
