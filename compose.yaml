@@ -13,7 +13,9 @@ services:
       - backend
     networks:
       - network-nestping
-
+    volumes:
+      - ./frontend/nestping-app:/app
+      - /app/node_modules
   # =========================
   # BACKEND
   # =========================
@@ -36,6 +38,9 @@ services:
         condition: service_healthy
     networks:
       - network-nestping
+    volumes:
+    - ./backend:/app
+    - /app/node_modules
 
   # =========================
   # DATABASE
