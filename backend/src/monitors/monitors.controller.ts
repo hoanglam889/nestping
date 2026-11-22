@@ -19,12 +19,12 @@ export class MonitorsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.monitorsService.findOne(+id);
+    return this.monitorsService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateMonitorDto: UpdateMonitorDto) {
-    return this.monitorsService.update(+id, updateMonitorDto);
+    return this.monitorsService.update(id, updateMonitorDto);
   }
 
   @Delete(':id')

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException  } from '@nestjs/common';
 import { CreateMonitorDto } from './dto/create-monitor.dto';
 import { UpdateMonitorDto } from './dto/update-monitor.dto';
 import { Monitors } from '../entities/entities/Monitors';
@@ -12,20 +12,32 @@ export class MonitorsService {
     private readonly monitorRepo: Repository<Monitors>,
   ) {}  
 
-  create(createMonitorDto: CreateMonitorDto) { 
-    return this.monitorRepo.save(createMonitorDto);
+//Hàm thêm mới Monitor
+  async create(createMonitorDto: CreateMonitorDto) { 
+    const newMonitor = this.monitorRepo.create(createMonitorDto);
+     return await this.monitorRepo.save(newMonitor);
    }
-
-  findAll() {
-    return this.monitorRepo.find();
+//Hàm GET Monitor
+  async findAll() {
+    return await this.monitorRepo.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} monitor`;
+  findOne(id: string) {
+    return this.monitorRepo.findOneBy({id});
   }
 
-  update(id: number, updateMonitorDto: UpdateMonitorDto) {
-    return `This action updates a #${id} monitor`;
+//Hàm PATCH cho monitor
+  async update(id: string, updateMonitorDto: UpdateMonitorDto) {
+    const exitstingMonitor = await this.monitorRepo.findOneBy({id});
+    if(!exitstingMonitor) {
+      throw new NotFoundException(`Không tìm thấy Monitor với ID: ${id}`); // Trả về HTTP 404
+    }
+    if(updateMonitorDto.userId) {
+      throw new BadRequestException (`Không được phép thay đổi id của tài khoản người dùng`);
+    }
+    Object.assign(exitstingMonitor, updateMonitorDto);
+
+    return await this.monitorRepo.save(exitstingMonitor);
   }
 
   remove(id: number) {
