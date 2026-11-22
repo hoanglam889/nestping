@@ -26,6 +26,7 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
+      entities: [__dirname + '/entities/entities/*{.ts,.js}'],
       autoLoadEntities: true,
       synchronize: false,
     }),
