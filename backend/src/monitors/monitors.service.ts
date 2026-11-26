@@ -40,7 +40,24 @@ export class MonitorsService {
     return await this.monitorRepo.save(exitstingMonitor);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} monitor`;
+  async remove(id: string) {
+  const monitor = await this.findOne(id);
+  if (!monitor) {
+    throw new NotFoundException(`Không tìm thấy Monitor với ID: ${id}`);
   }
+  return await this.monitorRepo.remove(monitor);
+}
+
+
+async togglePause(id: string) {
+  const monitor = await this.monitorRepo.findOneBy({ id });
+  if (!monitor) {
+    throw new NotFoundException(`Không tìm thấy Monitor với ID: ${id}`);
+  }
+
+  // Nếu đang PAUSED thì resume về UP, ngược lại thì PAUSE
+  monitor.status = monitor.status === 'PAUSED' ? 'UP' : 'PAUSED';
+
+  return await this.monitorRepo.save(monitor);
+}
 }

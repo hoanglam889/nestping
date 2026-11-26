@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Plus, AlertTriangle, Activity } from 'lucide-react';
 import { PageContainer } from '@/components/ui/PageContainer';
 import { PageHeader } from '@/components/ui/PageHeader';
@@ -9,47 +9,111 @@ import { EditMonitorDialog } from '@/components/monitors/EditMonitorDialog';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useToast } from '@/components/ui/Toast';
-import { useMonitoring } from '@/context/MonitoringContext';
 import type { Monitor } from '@/types';
+import { getAllMonitors, createMonitor, deleteMonitor, updateMonitor, togglePauseMonitor } from '@/services/monitorService';
 
 const MAX_MONITORS = 5;
 
 export function MonitorsPage() {
-  const { monitors, addMonitor, updateMonitor, deleteMonitor, togglePauseMonitor } = useMonitoring();
+  // State lưu danh sách monitors
+  const [monitors, setMonitors] = useState<any[]>([]);
+  
+  // 1. Hàm tải dữ liệu từ MySQL Backend
+  const loadData = () => {
+    getAllMonitors()
+      .then((data: any) => {
+        // Chuẩn hóa dữ liệu để Bảng có đủ cột hiển thị
+        const statusMap: Record<string, string> = {
+          UP: 'operational',
+          DOWN: 'down',
+          PAUSED: 'paused',
+        };
+        const formatted = (data || []).map((item: any) => ({
+          id: String(item.id),
+          name: item.name,
+          url: item.url,
+          // Chuyển đổi trạng thái từ Backend sang UI
+          status: statusMap[item.status] ?? 'operational',
+          responseTime: 120, // Số ms mặc định
+          uptime: 99.9,      // Uptime mặc định
+          checkInterval: item.checkInterval || 60,
+          lastChecked: item.lastCheckedAt || new Date().toISOString(),
+          createdAt: item.createdAt || new Date().toISOString(),
+        }));
+        setMonitors(formatted);
+      })
+      .catch((err) => console.error('Lỗi tải monitors:', err));
+  };
+
+  // 2. Tự động gọi khi vừa vào trang
+  useEffect(() => {
+    loadData();
+  }, []);
+
   const [addOpen, setAddOpen] = useState(false);
   const [editMonitor, setEditMonitor] = useState<Monitor | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Monitor | null>(null);
   const { toast } = useToast();
 
-  const handleAdd = (monitor: Monitor) => {
-    if (monitors.length >= MAX_MONITORS) {
-      toast('Monitor quota reached. Upgrade your plan to add more monitors.', 'error');
-      return;
+  // Hàm xử lý thêm monitor (Gọi API xong kéo lại bảng bằng loadData)
+  const handleAdd = async (newMonitor: any) => {
+    try {
+      await createMonitor({
+        name: newMonitor.name,
+        url: newMonitor.url,
+        userId: "1", // Tạm thời gán user ID 1
+        checkInterval: Number(newMonitor.checkInterval) || 60,
+        status: 'UP',
+      });
+
+      // Tải lại bảng ngay lập tức
+      loadData();
+      toast(`"${newMonitor.name}" đã được thêm vào hệ thống!`, 'success');
+    } catch (error) {
+      console.error('Lỗi khi thêm monitor:', error);
+      toast('Không thể thêm monitor. Vui lòng thử lại!', 'error');
     }
-    addMonitor(monitor);
-    toast(`"${monitor.name}" added and monitoring started.`, 'success');
   };
 
-  const handleEdit = (monitor: Monitor) => {
-    updateMonitor(monitor);
-    toast(`"${monitor.name}" updated.`, 'success');
+  const handleEdit = async (monitor: any) => {
+    try {
+      await updateMonitor(monitor.id, {
+        name: monitor.name,
+        url: monitor.url,
+        checkInterval: Number(monitor.checkInterval) || 60,
+      });
+      
+      loadData();
+      toast(`"${monitor.name}" đã được cập nhật!`, 'success');
+    } catch(error) {
+      console.error('Lỗi khi cập nhật monitor:', error);
+      toast('Không thể cập nhật monitor. Vui lòng thử lại!', 'error');
+    }
   };
 
-  const handleDelete = (monitor: Monitor) => {
-    deleteMonitor(monitor.id);
-    toast(`"${monitor.name}" deleted.`, 'info');
+  //Hàm xóa cứng(xóa luôn web ko cần theo dõi)
+  const handleDelete = async (monitor: any) => {
+    try {
+      await deleteMonitor(monitor.id);
+      loadData();
+      toast(`"${monitor.name}" đã được xóa khỏi hệ thống!`, 'success');
+    } catch(error) {
+    console.error('Lỗi khi thêm monitor:', error);
+    toast('Không thể thêm monitor. Vui lòng thử lại!', 'error');
+    }
   };
 
-  const handleTogglePause = (monitor: Monitor) => {
-    togglePauseMonitor(monitor.id);
-    const willPause = monitor.status !== 'paused';
-    toast(
-      willPause
-        ? `"${monitor.name}" paused. No checks will run.`
-        : `"${monitor.name}" resumed. Monitoring is active.`,
-      'info'
-    );
+  const handleTogglePause = async (monitor: any) => {
+   try {
+    await togglePauseMonitor(monitor.id);
+    await loadData();
+     toast(`Monitor ${monitor.status === 'paused' ? 'đã tiếp tục' : 'đã tạm dừng'}!`, 'success');
+   } catch (error) {
+    console.error('Lỗi khi toggle pause:', error);
+    toast('Không thể thay đổi trạng thái. Vui lòng thử lại!', 'error');
+   }
   };
+
 
   const usedQuota = monitors.length;
   const quotaFull = usedQuota >= MAX_MONITORS;

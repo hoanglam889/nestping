@@ -29,6 +29,11 @@ export class MonitorsController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.monitorsService.remove(+id);
+    return this.monitorsService.remove(id);
   }
+
+  @Patch(':id/toggle-pause')
+  togglePause(@Param('id') id: string) {
+  return this.monitorsService.togglePause(id);
+}
 }

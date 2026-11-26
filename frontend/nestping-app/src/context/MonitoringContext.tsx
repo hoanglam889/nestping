@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import type { Monitor, Incident, MonitorStatus } from '@/types';
 import { monitors as initialMonitors, incidents as initialIncidents } from '@/data/mockData';
+import { getAllMonitors } from '../services/monitorService.ts';
 
 interface MonitoringStats {
   totalMonitors: number;
@@ -33,15 +34,7 @@ const STORAGE_KEY_MONITORS = 'nestping_monitors_v1';
 const STORAGE_KEY_INCIDENTS = 'nestping_incidents_v1';
 
 export function MonitoringProvider({ children }: { children: ReactNode }) {
-  const [monitors, setMonitors] = useState<Monitor[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY_MONITORS);
-      if (saved) return JSON.parse(saved);
-    } catch {
-      // ignore
-    }
-    return initialMonitors;
-  });
+  const [monitors, setMonitors] = useState<Monitor[]>([]);
 
   const [incidents, setIncidents] = useState<Incident[]>(() => {
     try {
@@ -53,13 +46,28 @@ export function MonitoringProvider({ children }: { children: ReactNode }) {
     return initialIncidents;
   });
 
+    // Tải danh sách monitors từ MySQL Backend
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY_MONITORS, JSON.stringify(monitors));
-    } catch {
-      // ignore
-    }
-  }, [monitors]);
+    getAllMonitors()
+      .then((data: any) => {
+        // Chuyển đổi dữ liệu từ Backend sang format Frontend hiển thị
+        const formatted = (data || []).map((item: any) => ({
+          id: String(item.id),
+          name: item.name,
+          url: item.url,
+          status: item.status === 'UP' ? 'operational' : item.status === 'DOWN' ? 'down' : item.status === 'PAUSED' ? 'paused' : 'operational',
+          responseTime: 0,
+          uptime: 100,
+          checkInterval: item.checkInterval || 60,
+          lastChecked: item.lastCheckedAt || new Date().toISOString(),
+          createdAt: item.createdAt || new Date().toISOString(),
+        }));
+        setMonitors(formatted);
+      })
+      .catch((err: any) => {
+        console.error('Lỗi khi tải monitors từ Backend:', err);
+      });
+  }, []);
 
   useEffect(() => {
     try {
@@ -191,6 +199,7 @@ export function MonitoringProvider({ children }: { children: ReactNode }) {
   };
 
   return (
+    //MonitoringContext.Provider gói cục value và phát đi
     <MonitoringContext.Provider
       value={{
         monitors,
