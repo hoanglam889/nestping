@@ -10,6 +10,7 @@ import { MonitorChecksModule } from './monitor-checks/monitor-checks.module';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule();
 
@@ -44,6 +45,9 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
     IncidentsModule,
     NotificationChannelsModule,
     NotificationLogsModule,
+    
+    //ScheduleModule là cách gọi Cron Job
+    ScheduleModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],

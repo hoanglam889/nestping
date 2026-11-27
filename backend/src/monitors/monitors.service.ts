@@ -60,4 +60,29 @@ async togglePause(id: string) {
 
   return await this.monitorRepo.save(monitor);
 }
+
+
+//Hàm update thông tin sau khi tạo bản ghi 
+async updateStatusAfterCheck(id: string, status: 'SUCCESS' | 'FAILURE' ) {
+  const monitor = await this.monitorRepo.findOneBy({id});
+  if (!monitor) return null;
+
+  if(status === 'SUCCESS') {
+    //ép monitor.consecutiveSuccesses về int rồi + 1
+      monitor.consecutiveSuccesses = (Number(monitor.consecutiveSuccesses) || 0) + 1;
+      //thành công rồi thì ngắt chuỗi thất bại
+      monitor.consecutiveFailures = 0;
+      monitor.status = 'UP';
+  } else {
+      monitor.consecutiveFailures = (Number(monitor.consecutiveFailures) || 0) + 1;
+      monitor.consecutiveSuccesses = 0;
+      monitor.status = 'DOWN';
+    }
+    monitor.lastCheckedAt = new Date();
+    monitor.nextCheckAt = new Date(
+      Date.now() + (monitor.checkInterval ?? 60) * 1000
+    );
+
+    return await this.monitorRepo.save(monitor);
+}
 }

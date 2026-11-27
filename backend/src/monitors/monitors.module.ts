@@ -9,5 +9,6 @@ import { ConfigModule } from '@nestjs/config';
   imports: [TypeOrmModule.forFeature([Monitors])],
   controllers: [MonitorsController],
   providers: [MonitorsService],
+  exports: [MonitorsService],
 })
 export class MonitorsModule {}

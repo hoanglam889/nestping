@@ -1,34 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Param, Query } from '@nestjs/common';
 import { MonitorChecksService } from './monitor-checks.service';
-import { CreateMonitorCheckDto } from './dto/create-monitor-check.dto';
-import { UpdateMonitorCheckDto } from './dto/update-monitor-check.dto';
 
 @Controller('monitor-checks')
 export class MonitorChecksController {
   constructor(private readonly monitorChecksService: MonitorChecksService) {}
 
-  @Post()
-  create(@Body() createMonitorCheckDto: CreateMonitorCheckDto) {
-    return this.monitorChecksService.create(createMonitorCheckDto);
+  // POST /monitor-checks/:monitorId — trigger check thủ công cho 1 monitor
+  @Post(':monitorId')
+  create(@Param('monitorId') monitorId: string) {
+    return this.monitorChecksService.create(monitorId);
   }
 
   @Get()
-  findAll() {
+  findAll(@Query('monitorId') monitorId?: string) {
     return this.monitorChecksService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.monitorChecksService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMonitorCheckDto: UpdateMonitorCheckDto) {
-    return this.monitorChecksService.update(+id, updateMonitorCheckDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.monitorChecksService.remove(+id);
+    return this.monitorChecksService.findOne(id);
   }
 }

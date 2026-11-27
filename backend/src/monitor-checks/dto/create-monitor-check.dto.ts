@@ -1,1 +1,3 @@
-export class CreateMonitorCheckDto {}
+export class CreateMonitorCheckDto {
+    
+}
